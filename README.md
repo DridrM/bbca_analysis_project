@@ -1,8 +1,8 @@
 # BBCA analysis project
 
 ## Presentation
-The BBCA New Building Standard, first published in 2016, is the first method for measuring the carbon footprint of new buildings throughout their life cycle (construction, operation, and end-of-life). Its goal is to highlight exemplary low-carbon buildings and promote best practices in reducing carbon emissions.
-/!\ Note : I made this project back in 2022, so the data are not up-to-date.
+The BBCA New Building Standard, first published in 2016, is the first method for measuring the carbon footprint of new buildings throughout their life cycle (construction, operation, and end-of-life). Its goal is to highlight exemplary low-carbon buildings and promote best practices in reducing carbon emissions.  
+> **WARNING**: Note : I made this project back in 2022, so the data are not up-to-date.
 
 ## Goal of the study
 In this study, we will use a dump of the BBCA building database to analyze the effects of the BBCA standard on new buildings :
