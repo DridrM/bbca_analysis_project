@@ -1,0 +1,3 @@
+column_name; condition
+travaux; travaux %in% c('Neuf - RT 2012 - E+C-')
+type_batiment; !type_batiment %in% c('Tertiaire', 'Maisons groupées - Privé', 'Maison en secteur diffus - Privé', 'Maisons groupées - Public')

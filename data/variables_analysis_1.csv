@@ -3,3 +3,11 @@ contrib_chantier,X_graph.pie.contrib_Chantier
 contrib_eau,X_graph.pie.contrib_Eau
 contrib_energie,X_graph.pie.contrib_Energie
 contrib_pce,X_graph.pie.contrib_Produits.de.Constructions.et.Equipements
+index,Index
+consommation,Consommation
+surface,Surface
+travaux,Travaux
+type_batiment,Type.bâtiment
+usage_principal,Usage.principal
+ville,Ville
+zone_climatique,Zone.climatique

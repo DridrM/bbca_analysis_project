@@ -1,13 +1,13 @@
 library(dplyr)
 
-
 # Load a csv file into a dataframe, remove duplicates, select variables given
 # a list of variable names, rename these variables given a list of new variable
 # names. The list of old and new variable names are stored inside a csv file
 # accessed via the var_path argument. Remove rows where all variables are Na.
+# 
 load_and_clean_csv <- function(data_path, var_path, sep, header, encode) {
   # Load data
-  dtf <- read.csv(data_path, sep = sep, header = header, fileEncoding = encode)
+  df <- read.csv(data_path, sep = sep, header = header, fileEncoding = encode)
   
   # Load variable names
   variables <- read.csv(var_path, sep = sep, header = F, fileEncoding = encode)
@@ -17,19 +17,44 @@ load_and_clean_csv <- function(data_path, var_path, sep, header, encode) {
   new_variables <- variables[, 1]
   
   # Remove duplicates
-  dtf <- dtf %>% distinct(Index, .keep_all = T)
+  df <- df %>% distinct(Index, .keep_all = T)
   
   # Select variables given a vector of names
-  dtf <- dtf %>% select(any_of(old_variables))
+  df <- df %>% select(any_of(old_variables))
   
   # Rename with new variable names
   if (length(old_variables) != length(new_variables)) {
     stop("Error: The vectors 'old_variables' and 'new_variables' must be of the same length.")
   }
-  dtf <- dtf %>% rename(!!!setNames(old_variables, new_variables))
+  df <- df %>% rename(!!!setNames(old_variables, new_variables))
   
   # Remove rows where all variables are Na values
-  dtf <- dtf %>% filter_all(any_vars(!is.na(.)))
+  df <- df %>% filter_all(any_vars(!is.na(.)))
   
-  return(dtf)
+  return(df)
+}
+
+
+# This function filters a dataframe based on filtering conditions specified in a CSV file.
+# The CSV contains two columns: `column_name` (the name of the dataframe column to filter)
+# and `condition` (a logical condition that will be applied to the column). The function 
+# reads the CSV, iterates over each row, and applies the conditions to the dataframe 
+# iteratively. The separator for the CSV file can be specified as an argument.
+# 
+filter_df_by_csv <- function(df, sep, filter_csv_path) {
+  # Load the pairs column name / condition
+  filter_conditions <- read.csv(filter_csv_path, sep = sep, header = T, 
+                                stringsAsFactors = F)
+  
+  # Iterate through each row in the CSV and apply the filter
+  for (i in seq_len(nrow(filter_conditions))) {
+    column_name <- filter_conditions$column_name[i]
+    condition <- filter_conditions$condition[i]
+    
+    # Dynamically evaluate the condition within the context of the dataframe
+    df <- df %>%
+      filter(eval(parse(text = condition)))
+  }
+  
+  return(df)
 }
