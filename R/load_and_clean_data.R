@@ -44,7 +44,7 @@ load_and_clean_csv <- function(data_path, var_path, sep, header, encode) {
 filter_df_by_csv <- function(df, sep, filter_csv_path) {
   # Load the pairs column name / condition
   filter_conditions <- read.csv(filter_csv_path, sep = sep, header = T, 
-                                stringsAsFactors = F)
+                                stringsAsFactors = F, encoding = 'UTF-8')
   
   # Iterate through each row in the CSV and apply the filter
   for (i in seq_len(nrow(filter_conditions))) {
@@ -54,6 +54,27 @@ filter_df_by_csv <- function(df, sep, filter_csv_path) {
     # Dynamically evaluate the condition within the context of the dataframe
     df <- df %>%
       filter(eval(parse(text = condition)))
+  }
+  
+  return(df)
+}
+
+
+# This function removes rows from a dataframe that contain NA values in the specified columns.
+# It takes two arguments: 
+# 1. `df`: the dataframe from which NA rows will be removed.
+# 2. `column_names`: a vector of column names (as strings) where NA values will be checked.
+# 
+# For each column in the `column_names` vector, the function iterates over the dataframe, 
+# applying a filter to remove rows where the column contains NA values.
+# The function dynamically references column names using dplyr's tidy evaluation with `!!sym(column)` 
+# to ensure the correct column is being filtered.
+# It returns a dataframe with rows removed wherever NA values were present in the specified columns.
+#
+remove_na_by_columns <- function(df, column_names) {
+  # Iterate over the column vector and remove row that contain Na in the current column
+  for (column in column_names) {
+    df <- df %>% filter(!is.na(!!sym(column)))
   }
   
   return(df)
