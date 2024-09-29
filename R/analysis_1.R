@@ -41,25 +41,44 @@ bbca_df_tidy <- bbca_df %>% pivot_longer(cols = all_of(column_span),
 hue_category <- "type_batiment"
 
 # Histogram + KDE plot
-ggplot(bbca_df_tidy, aes(x = !!sym(value))) + 
+hist_kde <- ggplot(bbca_df_tidy, aes(x = !!sym(value))) + 
   geom_histogram(aes(y = ..density..), fill = "blue", color = "black", alpha = 0.5) +
   geom_density(color = "red", linewidth = 1, alpha = 0.5) +
   facet_wrap(as.formula(paste("~", category)), scales = "free") + 
   theme_minimal()
 
 # KDE hue by the hue_category variable
-ggplot(bbca_df_tidy, aes(x = !!sym(value), fill = !!sym(hue_category))) +
+kde_hue <- ggplot(bbca_df_tidy, aes(x = !!sym(value), fill = !!sym(hue_category))) +
   geom_density(aes(color = !!sym(hue_category)), color = "red", linewidth = 1, alpha = 0.5) +
   facet_wrap(as.formula(paste("~", category)), scales = "free") + 
   theme_minimal()
 
 # Histogram hue by the hue_category variable
-ggplot(bbca_df_tidy, aes(x = !!sym(value), fill = !!sym(hue_category))) + 
-  geom_histogram(aes(y = ..density..), color = "black", alpha = 0.5, position = "identity") +
+hist_hue <- ggplot(bbca_df_tidy, aes(x = !!sym(value), fill = !!sym(hue_category))) + 
+  geom_histogram(aes(y = after_stat(density)), color = "black", alpha = 0.5, position = "identity") +
   facet_wrap(as.formula(paste("~", category)), scales = "free") + 
   theme_minimal()
 
+# Violin hue by the hue_category variable
+violin_hue <- ggplot(bbca_df_tidy, aes(x = !!sym(hue_category), y = !!sym(value), fill = !!sym(hue_category))) + 
+  geom_violin(color = "black", alpha = 0.5, position = "dodge") +
+  facet_wrap(as.formula(paste("~", category)), scales = "free") + 
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
+
 # Use the summarised df to plot the repartition of impact type by building types----
-ggplot(bbca_df_summarised, aes(x = type_batiment, y = mean_impact_c, fill = impact_type)) +
+impact_rep <- ggplot(bbca_df_summarised, aes(x = type_batiment, y = mean_impact_c, fill = impact_type)) +
   geom_bar(position = "stack", stat = "identity") +
   theme_minimal()
+
+# Save the plots----
+figures_path <- "figures/analysis_1/"
+if (!dir.exists(figures_path)) {
+  dir.create(figures_path, recursive = T)
+}
+
+ggsave(paste(figures_path, "histograms_per_impact_type.png"), plot = hist_kde, width = 12, height = 9)
+ggsave(paste(figures_path, "densities_per_impact_and_building_type.png"), plot = kde_hue, width = 12, height = 9)
+ggsave(paste(figures_path, "histograms_per_impact_and_building_type.png"), plot = hist_hue, width = 12, height = 9)
+ggsave(paste(figures_path, "violins_per_impact_and_building_type.png"), plot = violin_hue, width = 12, height = 9)
+ggsave(paste(figures_path, "barplot_impact_type_given_building_type.png"), plot = impact_rep, width = 12, height = 9)
