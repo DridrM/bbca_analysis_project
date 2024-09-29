@@ -1,4 +1,5 @@
 library(dplyr)
+library(tidyr)
 
 # Load a csv file into a dataframe, remove duplicates, select variables given
 # a list of variable names, rename these variables given a list of new variable
@@ -76,6 +77,43 @@ remove_na_by_columns <- function(df, column_names) {
   for (column in column_names) {
     df <- df %>% filter(!is.na(!!sym(column)))
   }
+  
+  return(df)
+}
+
+
+# gather_group_by_summarize: This function reshapes a dataframe from wide to long format, 
+# groups it by specified columns, and applies one or more summary functions to the grouped data.
+#
+# Parameters:
+# - df: The input dataframe that contains the data to be reshaped and summarized.
+# - category: The name of the new column that will hold the category names (i.e., the former column names).
+# - value: The name of the new column that will hold the gathered values from the reshaped data.
+# - column_span: A selection of columns (e.g., column range, or a selection helper like starts_with) 
+#   that should be reshaped from wide to long format.
+# - group_by_cols: A vector of column names by which the data will be grouped. 
+#   These columns will be used as the grouping keys for summarization.
+# - summary_funcs: A named list of functions to apply to the gathered values. 
+#   The names in the list will determine the names of the new summarized columns (e.g., mean, sum, etc.).
+#
+# The function reshapes the data using `pivot_longer()`, then groups the dataframe 
+# by the specified columns. It applies multiple summary functions (mean, sum, etc.) 
+# to the gathered value column. The output is a summarized dataframe where each function 
+# produces a new column containing the computed statistic.
+#
+gather_group_by_summarise <- function(df, category, value, column_span, group_by_cols, summary_funcs) {
+  # Reshape the dataframe from wide to long format using pivot_longer
+  df <- df %>%
+    pivot_longer(cols = all_of(column_span), names_to = c(category), values_to = c(value)) %>%
+    
+    # Group by the specified columns
+    group_by(across(all_of(group_by_cols))) %>%
+    
+    # Apply multiple summary functions
+    summarise(across(.cols = !!sym(value), 
+                     .fns = list(!!!summary_funcs),
+                     .names = "{fn}_{col}"),
+              .groups = 'drop')
   
   return(df)
 }
