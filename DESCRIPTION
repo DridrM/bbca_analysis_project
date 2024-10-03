@@ -1,7 +1,7 @@
-Package: bbca_analysis_project
+Package: BBCAproj
 Title: BBCA analysis project
 Version: 0.1.0
-Authors@R: person("Dridr", "M", email = "DridrM@proton.me", role = c("aut", "cre", ""))
+Authors@R: person("Dridr", "M", email = "DridrM@proton.me", role = c("aut", "cre"))
 Description: Analysing carbon footprint of new buildings.
 License: MIT + file LICENSE
 Encoding: UTF-8
