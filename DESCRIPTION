@@ -1,0 +1,8 @@
+Package: bbca_analysis_project
+Title: BBCA analysis project
+Version: 0.1.0
+Authors@R: person("Dridr", "M", email = "", role = c("aut", "cre"))
+Description: Analysing carbon footprint of new buildings.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true

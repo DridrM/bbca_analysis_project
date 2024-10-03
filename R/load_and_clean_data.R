@@ -1,11 +1,27 @@
 library(dplyr)
 library(tidyr)
 
-# Load a csv file into a dataframe, remove duplicates, select variables given
-# a list of variable names, rename these variables given a list of new variable
-# names. The list of old and new variable names are stored inside a csv file
-# accessed via the var_path argument. Remove rows where all variables are Na.
-# 
+#' Load and Clean CSV Data
+#'
+#' This function loads a CSV file, selects and renames columns based on a provided variable mapping,
+#' removes duplicate rows based on an index column, and filters out rows with only missing values.
+#'
+#' @param data_path A character string specifying the path to the CSV data file.
+#' @param var_path A character string specifying the path to the CSV file containing the variable mapping.
+#'   This file should have two columns: the first for the new variable names and the second for the old variable names.
+#' @param sep A character string specifying the field separator character for both CSV files (e.g., `","`, `";"`).
+#' @param header A logical value indicating whether the CSV files contain a header row.
+#' @param encode A character string specifying the encoding of the CSV files (e.g., `"UTF-8"`, `"ISO-8859-1"`).
+#'
+#' @return A cleaned data frame where:
+#' \describe{
+#'   \item{Duplicates}{are removed based on the `Index` column.}
+#'   \item{Selected columns}{are based on the old variable names provided in the variable mapping file.}
+#'   \item{Columns}{are renamed based on the corresponding new variable names.}
+#'   \item{Rows}{containing only missing values are removed.}
+#' }
+#'
+#' @export
 load_and_clean_csv <- function(data_path, var_path, sep, header, encode) {
   # Load data
   df <- read.csv(data_path, sep = sep, header = header, fileEncoding = encode)
@@ -36,12 +52,19 @@ load_and_clean_csv <- function(data_path, var_path, sep, header, encode) {
 }
 
 
-# This function filters a dataframe based on filtering conditions specified in a CSV file.
-# The CSV contains two columns: `column_name` (the name of the dataframe column to filter)
-# and `condition` (a logical condition that will be applied to the column). The function 
-# reads the CSV, iterates over each row, and applies the conditions to the dataframe 
-# iteratively. The separator for the CSV file can be specified as an argument.
-# 
+#' Filter a DataFrame Based on Conditions from a CSV File
+#'
+#' This function filters rows in a dataframe by applying conditions specified in a CSV file.
+#' The CSV file should contain two columns: `column_name` and `condition`. For each row in the CSV,
+#' the function applies the specified condition to the specified column and filters the dataframe accordingly.
+#'
+#' @param df A dataframe to be filtered.
+#' @param sep A character string specifying the field separator character for the CSV file.
+#' @param filter_csv_path A string containing the path to the CSV file with the filter conditions.
+#'
+#' @return The filtered dataframe after all conditions have been applied.
+#'
+#' @export
 filter_df_by_csv <- function(df, sep, filter_csv_path) {
   # Load the pairs column name / condition
   filter_conditions <- read.csv(filter_csv_path, sep = sep, header = T, 
@@ -61,17 +84,17 @@ filter_df_by_csv <- function(df, sep, filter_csv_path) {
 }
 
 
-# This function removes rows from a dataframe that contain NA values in the specified columns.
-# It takes two arguments: 
-# 1. `df`: the dataframe from which NA rows will be removed.
-# 2. `column_names`: a vector of column names (as strings) where NA values will be checked.
-# 
-# For each column in the `column_names` vector, the function iterates over the dataframe, 
-# applying a filter to remove rows where the column contains NA values.
-# The function dynamically references column names using dplyr's tidy evaluation with `!!sym(column)` 
-# to ensure the correct column is being filtered.
-# It returns a dataframe with rows removed wherever NA values were present in the specified columns.
-#
+#' Remove Rows with NA Values from Specified Columns
+#'
+#' This function removes rows from a dataframe that contain `NA` (missing values) in any of the specified columns.
+#' The function iterates through the list of column names and removes rows that have missing values in each specified column.
+#'
+#' @param df A dataframe from which rows with `NA` values will be removed.
+#' @param column_names A character vector containing the names of the columns to check for `NA` values.
+#'
+#' @return A dataframe with rows containing `NA` values removed from the specified columns.
+#'
+#' @export
 remove_na_by_columns <- function(df, column_names) {
   # Iterate over the column vector and remove row that contain Na in the current column
   for (column in column_names) {
@@ -82,25 +105,20 @@ remove_na_by_columns <- function(df, column_names) {
 }
 
 
-# gather_group_by_summarize: This function reshapes a dataframe from wide to long format, 
-# groups it by specified columns, and applies one or more summary functions to the grouped data.
-#
-# Parameters:
-# - df: The input dataframe that contains the data to be reshaped and summarized.
-# - category: The name of the new column that will hold the category names (i.e., the former column names).
-# - value: The name of the new column that will hold the gathered values from the reshaped data.
-# - column_span: A selection of columns (e.g., column range, or a selection helper like starts_with) 
-#   that should be reshaped from wide to long format.
-# - group_by_cols: A vector of column names by which the data will be grouped. 
-#   These columns will be used as the grouping keys for summarization.
-# - summary_funcs: A named list of functions to apply to the gathered values. 
-#   The names in the list will determine the names of the new summarized columns (e.g., mean, sum, etc.).
-#
-# The function reshapes the data using `pivot_longer()`, then groups the dataframe 
-# by the specified columns. It applies multiple summary functions (mean, sum, etc.) 
-# to the gathered value column. The output is a summarized dataframe where each function 
-# produces a new column containing the computed statistic.
-#
+#' Reshape, Group, and Summarise a DataFrame
+#'
+#' This function reshapes a dataframe from wide to long format, groups by specified columns, and applies multiple summary functions to the values in the reshaped dataframe.
+#'
+#' @param df A dataframe to be reshaped, grouped, and summarised.
+#' @param category A string specifying the name of the new column that will hold the reshaped variable names (from wide to long format).
+#' @param value A string specifying the name of the new column that will hold the reshaped values (from wide to long format).
+#' @param column_span A character vector specifying the columns to reshape from wide to long format.
+#' @param group_by_cols A character vector specifying the columns to group by after reshaping.
+#' @param summary_funcs A named list of functions to be applied as summaries to the `value` column after grouping.
+#'
+#' @return A summarised dataframe with the results of the applied summary functions.
+#'
+#' @export
 gather_group_by_summarise <- function(df, category, value, column_span, group_by_cols, summary_funcs) {
   # Reshape the dataframe from wide to long format using pivot_longer
   df <- df %>%
