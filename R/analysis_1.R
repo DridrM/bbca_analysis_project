@@ -1,10 +1,7 @@
-# library(here)
 library(tidyr)
 library(ggplot2)
 library(BBCAproj)
 
-# Load local modules----
-# source(here("R", "load_and_clean_data.R"))
 
 # Call the load_and_clean_csv function----
 data_path <- "data/bbca_data.csv"
