@@ -42,7 +42,7 @@ hue_category <- "type_batiment"
 
 # Histogram + KDE plot
 hist_kde <- ggplot(bbca_df_tidy, aes(x = !!sym(value))) + 
-  geom_histogram(aes(y = ..density..), fill = "blue", color = "black", alpha = 0.5) +
+  geom_histogram(aes(y = after_stat(density)), fill = "blue", color = "black", alpha = 0.5) +
   geom_density(color = "red", linewidth = 1, alpha = 0.5) +
   facet_wrap(as.formula(paste("~", category)), scales = "free") + 
   theme_minimal()
