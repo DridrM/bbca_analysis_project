@@ -1,15 +1,19 @@
 library(tidyr)
+library(config)
 library(ggplot2)
 library(BBCAproj)
 
 
+# Get the default configuration
+config <- config::get()
+
 # Call the load and clean csv function----
-data_path <- "data/bbca_data.csv"
-variables_path <- "data/variables_analysis_1.csv"
+data_path <- config$csv$data_path
+variables_path <- config$csv$analysis_1$variables_path
 bbca_df <- BBCAproj::load_and_clean_csv(data_path, variables_path, ",", T, "UTF-8")
 
 # Filter the bbca_df on the pairs column name / condition inside the filter_cond_analysis_1.csv file----
-filter_conditions_path <- "data/filter_cond_analysis_1.csv"
+filter_conditions_path <- config$csv$analysis_1$filter_conditions_path
 bbca_df <- BBCAproj::filter_df_by_csv(bbca_df, ";", filter_conditions_path)
 
 # Remove the row that contain Na in the following columns----
@@ -70,7 +74,7 @@ impact_rep <- ggplot(bbca_df_summarised, aes(x = type_batiment, y = mean_impact_
   theme_minimal()
 
 # Save the plots----
-figures_path <- "figures/analysis_1/"
+figures_path <- config$figures$analysis_1$path
 if (!dir.exists(figures_path)) {
   dir.create(figures_path, recursive = T)
 }

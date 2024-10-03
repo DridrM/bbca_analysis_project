@@ -1,0 +1,11 @@
+default:
+  csv:
+    data_path: "data/bbca_data.csv"
+    
+    analysis_1:
+      variables_path: "data/variables_analysis_1.csv"
+      filter_conditions_path: "data/filter_cond_analysis_1.csv"
+  
+  figures:
+    analysis_1:
+      path: "figures/analysis_1/"
