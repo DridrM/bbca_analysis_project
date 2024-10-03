@@ -20,6 +20,8 @@ library(tidyr)
 #'   \item{Columns}{are renamed based on the corresponding new variable names.}
 #'   \item{Rows}{containing only missing values are removed.}
 #' }
+#' 
+#' @import dplyr
 #'
 #' @export
 load_and_clean_csv <- function(data_path, var_path, sep, header, encode) {
@@ -63,6 +65,8 @@ load_and_clean_csv <- function(data_path, var_path, sep, header, encode) {
 #' @param filter_csv_path A string containing the path to the CSV file with the filter conditions.
 #'
 #' @return The filtered dataframe after all conditions have been applied.
+#' 
+#' @import dplyr
 #'
 #' @export
 filter_df_by_csv <- function(df, sep, filter_csv_path) {
@@ -93,6 +97,8 @@ filter_df_by_csv <- function(df, sep, filter_csv_path) {
 #' @param column_names A character vector containing the names of the columns to check for `NA` values.
 #'
 #' @return A dataframe with rows containing `NA` values removed from the specified columns.
+#' 
+#' @import dplyr
 #'
 #' @export
 remove_na_by_columns <- function(df, column_names) {
@@ -117,6 +123,9 @@ remove_na_by_columns <- function(df, column_names) {
 #' @param summary_funcs A named list of functions to be applied as summaries to the `value` column after grouping.
 #'
 #' @return A summarised dataframe with the results of the applied summary functions.
+#' 
+#' @import dplyr
+#' @import tidyr
 #'
 #' @export
 gather_group_by_summarise <- function(df, category, value, column_span, group_by_cols, summary_funcs) {

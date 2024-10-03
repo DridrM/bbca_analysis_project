@@ -6,4 +6,5 @@ Description: Analysing carbon footprint of new buildings.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: dplyr, tidyr
 RoxygenNote: 7.3.2
